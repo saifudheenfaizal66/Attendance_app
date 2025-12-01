@@ -1,4 +1,4 @@
-import 'package:espoir_staff_app/presentation/screens/assignment_screen.dart';
+import 'package:espoir_staff_app/presentation/screens/leaves_screen.dart';
 import 'package:espoir_staff_app/presentation/screens/home_screen.dart';
 import 'package:espoir_staff_app/presentation/screens/attendance_screen.dart';
 
@@ -19,7 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const AttendanceScreen(),
-    const AssignmentScreen(),
+    const LeavesScreen(),
     const ProfileScreen(),
   ];
 
@@ -44,8 +44,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             label: 'Attendance',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.task),
-            label: 'Tasks',
+            icon: Icon(Icons.calendar_today),
+            label: 'Leaves',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

@@ -1,5 +1,6 @@
 import 'package:espoir_staff_app/presentation/blocs/auth/auth_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/theme/theme_bloc.dart';
+import 'package:espoir_staff_app/data/utils/demo_data.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -100,6 +101,23 @@ class ProfileScreen extends StatelessWidget {
                                   },
                                 );
                               },
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Developer Options
+                        _buildSectionTitle("Developer Options"),
+                        const SizedBox(height: 10),
+                        _buildMenuCard(
+                          children: [
+                            _buildListTile(
+                              icon: Icons.cloud_upload_outlined,
+                              title: 'Add Demo Holidays',
+                              color: Colors.orange,
+                              onTap: () =>
+                                  DemoDataSeeder.addDemoHolidays(context),
                             ),
                           ],
                         ),

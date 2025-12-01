@@ -12,6 +12,9 @@ import 'package:espoir_staff_app/presentation/blocs/auth/auth_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/attendance/attendance_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/weekly_status/weekly_status_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/theme/theme_bloc.dart';
+import 'package:espoir_staff_app/data/repositories/leave_repository_impl.dart';
+import 'package:espoir_staff_app/domain/repositories/leave_repository.dart';
+import 'package:espoir_staff_app/presentation/blocs/leave/leave_bloc.dart';
 import 'package:espoir_staff_app/presentation/screens/auth_wrapper.dart';
 
 void main() async {
@@ -44,6 +47,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<GeofencingService>(
           create: (context) => GeofencingService(),
         ),
+        RepositoryProvider<LeaveRepository>(
+          create: (context) => LeaveRepositoryImpl(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -65,6 +71,11 @@ class MyApp extends StatelessWidget {
             create: (context) => WeeklyStatusBloc(
               attendanceRepository: context.read<AttendanceRepository>(),
             )..add(LoadWeeklyStatus()),
+          ),
+          BlocProvider<LeaveBloc>(
+            create: (context) => LeaveBloc(
+              leaveRepository: context.read<LeaveRepository>(),
+            ),
           ),
         ],
         child: BlocBuilder<ThemeBloc, ThemeState>(
