@@ -1,6 +1,7 @@
 import 'package:espoir_staff_app/presentation/blocs/auth/auth_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/attendance/attendance_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/weekly_status/weekly_status_bloc.dart';
+import 'package:espoir_staff_app/presentation/blocs/statistics/statistics_bloc.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final authState = context.read<AuthBloc>().state;
+    if (authState is AuthAuthenticated) {
+      context.read<StatisticsBloc>().add(LoadStatistics(authState.user.uid));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -316,11 +326,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildStatisticsCard() {
-    return BlocBuilder<AttendanceBloc, AttendanceState>(
-      builder: (context, attendanceState) {
-        // Simple calculation or placeholder if data missing
-        // For now, we'll use static or simple logic
-        // Ideally this should come from a 'StatisticsBloc' or computed in AttendanceBloc
+    return BlocBuilder<StatisticsBloc, StatisticsState>(
+      builder: (context, state) {
+        String attendanceValue = "--";
+        String remainingDaysValue = "--";
+        String leavesValue = "--";
+        double attendancePercent = 0.0;
+
+        if (state is StatisticsLoaded) {
+          attendanceValue = state.attendancePercentage;
+          remainingDaysValue = state.remainingDays;
+          leavesValue = state.totalLeavesTaken;
+
+          String cleanPercent = attendanceValue.replaceAll('%', '');
+          attendancePercent = (double.tryParse(cleanPercent) ?? 0) / 100;
+        }
 
         return Container(
           padding: const EdgeInsets.all(20),
@@ -334,19 +354,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   offset: const Offset(0, 5)),
             ],
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildCircularStat(
-                title: "Attendance",
-                value: "83%", // Placeholder
-                isPercentage: true,
-                color: const Color(0xFF6C63FF),
-              ),
-              _buildCircularStat(
-                title: "Ongoing Days",
-                value: "23", // Placeholder
-                color: const Color(0xFF6C63FF).withValues(alpha: 0.7),
+                const Text("     Monthly Statistics",
+              style: TextStyle(
+                  fontSize: 14, color:Color.fromARGB(255, 133, 132, 132))),
+                  const SizedBox(height: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildCircularStat(
+                    title: "Attendance",
+                    value: attendanceValue,
+                    percent: attendancePercent,
+                    isPercentage: true,
+                    color: const Color(0xFF6C63FF),
+                  ),
+                  _buildCircularStat(
+                    title: "Remaining Days",
+                    value: remainingDaysValue,
+                    percent: 1.0,
+                    color: const Color(0xFF6C63FF).withValues(alpha: 0.7),
+                  ),
+                  _buildCircularStat(
+                    title: "Total Leaves",
+                    value: leavesValue,
+                    percent: 1.0,
+                    color: const Color(0xFF6C63FF),
+                  ),
+                ],
               ),
             ],
           ),
@@ -358,8 +396,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
 Widget _buildGridMenuCard(BuildContext context) {
   final List<Map<String, dynamic>> menuItems = [
-    {'icon': Icons.newspaper, 'label': 'News', 'hasDot': true},
-    {'icon': Icons.bar_chart_outlined, 'label': 'Predictor', 'hasDot': false},
+  //  {'icon': Icons.newspaper, 'label': 'News', 'hasDot': true},
+    {'icon': Icons.calendar_today, 'label': 'Leaves', 'hasDot': false},
     {'icon': Icons.edit_note_outlined, 'label': 'Assignments', 'hasDot': true},
   ];
 
@@ -467,6 +505,7 @@ Widget _buildStatusCircle(
 Widget _buildCircularStat(
     {required String title,
     required String value,
+    double percent = 1.0,
     bool isPercentage = false,
     required Color color}) {
   return Column(
@@ -478,7 +517,7 @@ Widget _buildCircularStat(
             height: 80,
             width: 80,
             child: CircularProgressIndicator(
-              value: isPercentage ? 0.83 : 1.0, // Mock value for now
+              value: isPercentage ? percent : 1.0,
               strokeWidth: 6,
               backgroundColor: Colors.grey.shade100,
               valueColor: AlwaysStoppedAnimation<Color>(color),
