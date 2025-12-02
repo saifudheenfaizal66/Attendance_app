@@ -26,4 +26,13 @@ class Attendance {
       status: data['status'],
     );
   }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'punchIn': Timestamp.fromDate(punchIn),
+      if (punchOut != null) 'punchOut': Timestamp.fromDate(punchOut!),
+      'isLate': isLate,
+      if (status != null) 'status': status,
+    };
+  }
 }

@@ -56,9 +56,21 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
 
         final userId = _auth.currentUser!.uid;
         final now = DateTime.now();
-        final isLate = now.hour > 10 || (now.hour == 10 && now.minute > 0);
 
-        await attendanceRepository.punchIn(userId, isLate: isLate);
+        // New Timing Logic:
+        // Office Start: 10:15 AM
+        // Late: 10:16 AM - 11:00 AM
+        // Half-day: After 11:00 AM
+
+        String status = 'Present';
+
+        if (now.hour > 11 || (now.hour == 11 && now.minute > 0)) {
+          status = 'Half-day';
+        } else if (now.hour > 10 || (now.hour == 10 && now.minute > 15)) {
+          status = 'Late';
+        }
+
+        await attendanceRepository.punchIn(userId, status: status);
         emit(AttendanceSuccess());
 
         // Reload data to reflect new punch
@@ -72,25 +84,7 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
       }
     });
 
-    on<PunchOut>((event, emit) async {
-      emit(AttendanceLoading());
-      try {
-        final userId = _auth.currentUser!.uid;
-
-        // Fetch location for Punch Out as well (as requested "during punch-in and punch-out")
-        final position = await geofencingService.getCurrentLocation();
-
-        await attendanceRepository.punchOut(userId);
-        emit(AttendanceSuccess());
-
-        // Reload data
-        await _loadData(emit,
-            fetchLocation: false, preFetchedPosition: position);
-      } catch (e) {
-        emit(AttendanceFailure(e.toString()));
-        await _loadData(emit, fetchLocation: false);
-      }
-    });
+    // PunchOut handler removed
 
     on<SetCurrentLocationAsOffice>((event, emit) async {
       emit(AttendanceLoading());
@@ -158,9 +152,9 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
       }
 
       final now = DateTime.now();
-      final isLate = now.hour > 10 || (now.hour == 10 && now.minute > 0);
+      // Update UI 'isLate' indicator based on new timing (10:15)
+      final isLate = now.hour > 10 || (now.hour == 10 && now.minute > 15);
 
-      bool isPunchOutEnabled = false;
       bool isAttendanceCompleted = false;
       DateTime? punchInTime;
 
@@ -169,15 +163,8 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
             currentAttendance.punchIn.month == now.month &&
             currentAttendance.punchIn.year == now.year) {
           punchInTime = currentAttendance.punchIn;
-
-          if (currentAttendance.punchOut != null) {
-            isAttendanceCompleted = true;
-          } else {
-            final duration = now.difference(currentAttendance.punchIn);
-            if (duration.inMinutes >= 210) {
-              isPunchOutEnabled = true;
-            }
-          }
+          // Attendance is completed once punched in (no punch out)
+          isAttendanceCompleted = true;
         }
       }
 
@@ -190,7 +177,7 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
             : null,
         officeLocation: {'lat': officeLat, 'lng': officeLng},
         punchInTime: punchInTime,
-        isPunchOutEnabled: isPunchOutEnabled,
+        isPunchOutEnabled: false, // Always false
         isAttendanceCompleted: isAttendanceCompleted,
         lateCount: lateCount,
       ));

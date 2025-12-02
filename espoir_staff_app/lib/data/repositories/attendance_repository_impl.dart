@@ -6,37 +6,39 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
-  Future<void> punchIn(String userId, {bool isLate = false}) async {
+  Future<void> punchIn(String userId, {required String status}) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    // Check if already punched in today
+    final querySnapshot = await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('attendance')
+        .where('punchIn', isGreaterThanOrEqualTo: Timestamp.fromDate(today))
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      throw Exception('Already punched in today');
+    }
+
+    final attendance = Attendance(
+      id: '', // Firestore generates ID
+      punchIn: now,
+      status: status,
+    );
+
     await _firestore
         .collection('users')
         .doc(userId)
         .collection('attendance')
-        .add({
-      'punchIn': FieldValue.serverTimestamp(),
-      'isLate': isLate,
-    });
+        .add(attendance.toFirestore());
 
-    if (isLate) {
-      final userDoc = await _firestore.collection('users').doc(userId).get();
-      List<dynamic> lateDates = [];
-      if (userDoc.exists && userDoc.data()!.containsKey('late_dates')) {
-        lateDates = List.from(userDoc.data()!['late_dates']);
-      }
-
-      final now = DateTime.now();
-      // Filter dates to keep only current month
-      lateDates = lateDates.where((date) {
-        final d = (date as Timestamp).toDate();
-        return d.month == now.month && d.year == now.year;
-      }).toList();
-
-      lateDates.add(Timestamp.fromDate(now));
-
-      await _firestore.collection('users').doc(userId).set({
-        'late_dates': lateDates,
-        'late_count':
-            lateDates.length, // Keep for backward compatibility/easy read
-      }, SetOptions(merge: true));
+    // Update user stats if Late or Half-day
+    if (status == 'Late' || status == 'Half-day') {
+      await _firestore.collection('users').doc(userId).update({
+        'late_count': FieldValue.increment(1),
+      });
     }
   }
 
@@ -58,40 +60,6 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
       'lng': lng,
       'radius': radius,
     });
-  }
-
-  @override
-  Future<void> punchOut(String userId) async {
-    final querySnapshot = await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('attendance')
-        .orderBy('punchIn', descending: true)
-        .limit(1)
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      final doc = querySnapshot.docs.first;
-      final docId = doc.id;
-      final punchInTime = (doc['punchIn'] as Timestamp).toDate();
-      final now = DateTime.now();
-      final duration = now.difference(punchInTime);
-
-      String status = 'Half Day';
-      if (duration.inHours >= 4) {
-        status = 'Full Day';
-      }
-
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('attendance')
-          .doc(docId)
-          .update({
-        'punchOut': FieldValue.serverTimestamp(),
-        'status': status,
-      });
-    }
   }
 
   @override

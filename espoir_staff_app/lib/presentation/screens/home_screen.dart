@@ -152,23 +152,35 @@ class _HomeScreenState extends State<HomeScreen> {
             };
           } else if (!state.isAttendanceCompleted) {
             // Punched in, check if can punch out
-            title =
-                "Punched in at ${DateFormat('hh:mm a').format(state.punchInTime!)}";
-            if (state.isPunchOutEnabled) {
-              buttonText = "Punch Out";
-              onPressed = () {
-                context.read<AttendanceBloc>().add(PunchOut());
-              };
-            } else {
-              buttonText = "On Duty";
-              buttonColor = Colors.grey;
-              onPressed = null; // Cannot punch out yet
-            }
-          } else {
-            // Attendance completed for today
-            title = "Attendance Completed";
+            // With new logic, attendance is completed immediately after punch in.
+            // But if we want to show "Marked Late" etc, we can check isLate.
+
+            // However, the bloc sets isAttendanceCompleted = true immediately.
+            // So this block might not be reached if we rely on that flag.
+            // Let's check the bloc logic again.
+            // Bloc: if (currentAttendance != null && isToday) -> isAttendanceCompleted = true.
+            // So we will fall into the 'else' block below (lines 167+).
+
+            // We should modify the 'else' block to show specific status.
+            title = "Attendance Marked";
             buttonText = "Done";
             buttonColor = Colors.green;
+            onPressed = null;
+          } else {
+            // Attendance completed for today
+            if (state.isLate) {
+              title = "Marked Late";
+              buttonColor = Colors.orange;
+            } else {
+              title = "Attendance Marked";
+              buttonColor = Colors.green;
+            }
+
+            // We can also check if it was half day if we had that info in state.
+            // The state has isLate, but not isHalfDay explicitly (it has punchInTime).
+            // We can infer or add to state. For now, let's stick to isLate.
+
+            buttonText = "Done";
             onPressed = null;
           }
         } else if (state is AttendanceFailure) {
@@ -358,10 +370,10 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-                const Text("     Monthly Statistics",
-              style: TextStyle(
-                  fontSize: 14, color:Color.fromARGB(255, 133, 132, 132))),
-                  const SizedBox(height: 15),
+              const Text("     Monthly Statistics",
+                  style: TextStyle(
+                      fontSize: 14, color: Color.fromARGB(255, 133, 132, 132))),
+              const SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -396,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 Widget _buildGridMenuCard(BuildContext context) {
   final List<Map<String, dynamic>> menuItems = [
-  //  {'icon': Icons.newspaper, 'label': 'News', 'hasDot': true},
+    //  {'icon': Icons.newspaper, 'label': 'News', 'hasDot': true},
     {'icon': Icons.calendar_today, 'label': 'Leaves', 'hasDot': false},
     {'icon': Icons.edit_note_outlined, 'label': 'Assignments', 'hasDot': true},
   ];

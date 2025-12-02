@@ -83,20 +83,28 @@ class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
       // 3. Calculate Attendance Percentage
       // Formula: (Present Days / Total Working Days In Month) * 100
 
-      // Count unique days to handle multiple punches on the same day
-      final uniquePresentDays = monthlyAttendance
-          .map((a) {
-            return DateTime(a.punchIn.year, a.punchIn.month, a.punchIn.day);
-          })
-          .toSet()
-          .length;
+      // Calculate weighted present days
+      double weightedPresentDays = 0;
+      final uniqueDays = <String>{};
+
+      for (var a in monthlyAttendance) {
+        final dayKey = '${a.punchIn.year}-${a.punchIn.month}-${a.punchIn.day}';
+        if (!uniqueDays.contains(dayKey)) {
+          uniqueDays.add(dayKey);
+          if (a.status == 'Half-day') {
+            weightedPresentDays += 0.5;
+          } else {
+            weightedPresentDays += 1.0;
+          }
+        }
+      }
 
       final totalWorkingDaysInMonth =
           await _leaveRepository.calculateLeaveDays(startOfMonth, endOfMonth);
 
       // Avoid division by zero
       final double percentage = totalWorkingDaysInMonth > 0
-          ? (uniquePresentDays / totalWorkingDaysInMonth) * 100
+          ? (weightedPresentDays / totalWorkingDaysInMonth) * 100
           : 0.0;
 
       // 4. Calculate Remaining Days
