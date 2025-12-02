@@ -17,6 +17,9 @@ import 'package:espoir_staff_app/domain/repositories/leave_repository.dart';
 import 'package:espoir_staff_app/presentation/blocs/leave/leave_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/statistics/statistics_bloc.dart';
 import 'package:espoir_staff_app/presentation/screens/auth_wrapper.dart';
+import 'package:espoir_staff_app/data/repositories/daily_report_repository_impl.dart';
+import 'package:espoir_staff_app/domain/repositories/daily_report_repository.dart';
+import 'package:espoir_staff_app/presentation/blocs/daily_report/daily_report_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +54,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<LeaveRepository>(
           create: (context) => LeaveRepositoryImpl(),
         ),
+        RepositoryProvider<DailyReportRepository>(
+          create: (context) => DailyReportRepositoryImpl(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -82,6 +88,11 @@ class MyApp extends StatelessWidget {
             create: (context) => StatisticsBloc(
               attendanceRepository: context.read<AttendanceRepository>(),
               leaveRepository: context.read<LeaveRepository>(),
+            ),
+          ),
+          BlocProvider<DailyReportBloc>(
+            create: (context) => DailyReportBloc(
+              context.read<DailyReportRepository>(),
             ),
           ),
         ],

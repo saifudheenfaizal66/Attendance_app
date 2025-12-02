@@ -2,6 +2,7 @@ import 'package:espoir_staff_app/presentation/blocs/auth/auth_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/attendance/attendance_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/weekly_status/weekly_status_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/statistics/statistics_bloc.dart';
+import 'package:espoir_staff_app/presentation/screens/daily_report_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -411,6 +412,17 @@ Widget _buildGridMenuCard(BuildContext context) {
     //  {'icon': Icons.newspaper, 'label': 'News', 'hasDot': true},
     {'icon': Icons.calendar_today, 'label': 'Leaves', 'hasDot': false},
     {'icon': Icons.edit_note_outlined, 'label': 'Assignments', 'hasDot': true},
+    {
+      'icon': Icons.assignment,
+      'label': 'Daily Reports',
+      'hasDot': false,
+      'onTap': () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const DailyReportScreen()),
+        );
+      }
+    },
   ];
 
   return Container(

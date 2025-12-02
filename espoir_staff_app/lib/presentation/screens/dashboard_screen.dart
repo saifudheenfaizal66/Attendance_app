@@ -1,3 +1,4 @@
+import 'package:espoir_staff_app/presentation/screens/daily_report_screen.dart';
 import 'package:espoir_staff_app/presentation/screens/leaves_screen.dart';
 import 'package:espoir_staff_app/presentation/screens/home_screen.dart';
 import 'package:espoir_staff_app/presentation/screens/attendance_screen.dart';
@@ -18,7 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const AttendanceScreen(),
+    const DailyReportScreen(),
     const LeavesScreen(),
     const ProfileScreen(),
   ];
@@ -34,14 +35,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
+
           BottomNavigationBarItem(
-            icon: Icon(Icons.access_time),
-            label: 'Attendance',
+            icon: Icon(Icons.assignment),
+            label: 'Daily Report',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
