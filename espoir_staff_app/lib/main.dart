@@ -108,9 +108,17 @@ class MyApp extends StatelessWidget {
               darkTheme: ThemeData(
                 useMaterial3: true,
                 brightness: Brightness.dark,
+                cardColor: const Color(0xFF1E1E1E),
+                scaffoldBackgroundColor: const Color(0xFF121212),
                 colorScheme: ColorScheme.fromSeed(
                   seedColor: Colors.blue,
                   brightness: Brightness.dark,
+                  surface: const Color(0xFF1E1E1E),
+                ),
+                textTheme: const TextTheme(
+                  titleLarge: TextStyle(color: Colors.white),
+                  bodyLarge: TextStyle(color: Colors.white),
+                  bodyMedium: TextStyle(color: Colors.white70),
                 ),
               ),
               themeMode: state.themeMode,

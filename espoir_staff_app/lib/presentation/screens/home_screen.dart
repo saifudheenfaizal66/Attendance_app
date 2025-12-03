@@ -195,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
@@ -211,8 +211,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -264,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -299,8 +301,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Text(weekDay,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.bodyLarge?.color)),
                   Text(monthYear, style: const TextStyle(color: Colors.grey)),
                 ],
               ),
@@ -323,12 +327,12 @@ class _HomeScreenState extends State<HomeScreen> {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildStatusCircle("M", 1, state),
-                  _buildStatusCircle("T", 2, state),
-                  _buildStatusCircle("W", 3, state),
-                  _buildStatusCircle("Th", 4, state),
-                  _buildStatusCircle("Fr", 5, state),
-                  _buildStatusCircle("Sat", 6, state),
+                  _buildStatusCircle(context, "M", 1, state),
+                  _buildStatusCircle(context, "T", 2, state),
+                  _buildStatusCircle(context, "W", 3, state),
+                  _buildStatusCircle(context, "Th", 4, state),
+                  _buildStatusCircle(context, "Fr", 5, state),
+                  _buildStatusCircle(context, "Sat", 6, state),
                 ],
               );
             },
@@ -358,7 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -428,7 +432,7 @@ Widget _buildGridMenuCard(BuildContext context) {
   return Container(
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
@@ -449,6 +453,7 @@ Widget _buildGridMenuCard(BuildContext context) {
       ),
       itemBuilder: (context, index) {
         return _buildMenuItem(
+          context,
           menuItems[index]['icon'],
           menuItems[index]['label'],
           menuItems[index]['hasDot'],
@@ -459,8 +464,8 @@ Widget _buildGridMenuCard(BuildContext context) {
   );
 }
 
-Widget _buildStatusCircle(
-    String dayLabel, int weekdayIndex, WeeklyStatusState state) {
+Widget _buildStatusCircle(BuildContext context, String dayLabel,
+    int weekdayIndex, WeeklyStatusState state) {
   // weekdayIndex: 1 = Mon, ..., 7 = Sun
   final now = DateTime.now();
   final isToday = now.weekday == weekdayIndex;
@@ -489,12 +494,12 @@ Widget _buildStatusCircle(
 
   if (isPresent) {
     bgColor = const Color(0xFF6C63FF);
-    textColor = Colors.black;
+    textColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
     icon = const Icon(Icons.check, size: 16, color: Colors.white);
   } else if (isToday) {
     // Today but not punched in yet
     bgColor = Colors.grey.shade200;
-    textColor = Colors.black;
+    textColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
     icon = const Text("?", style: TextStyle(fontWeight: FontWeight.bold));
   } else if (isFuture) {
     // Future days
@@ -504,7 +509,7 @@ Widget _buildStatusCircle(
   } else {
     // Past days, absent
     bgColor = Colors.red.withValues(alpha: 0.1);
-    textColor = Colors.black;
+    textColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
     icon = const Icon(Icons.close, size: 16, color: Colors.red);
   }
 
@@ -558,8 +563,8 @@ Widget _buildCircularStat(
   );
 }
 
-Widget _buildMenuItem(
-    IconData icon, String label, bool hasDot, VoidCallback? onTap) {
+Widget _buildMenuItem(BuildContext context, IconData icon, String label,
+    bool hasDot, VoidCallback? onTap) {
   return InkWell(
     onTap: onTap,
     child: Column(
@@ -578,8 +583,10 @@ Widget _buildMenuItem(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(label,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).textTheme.bodyLarge?.color)),
             if (hasDot)
               Container(
                 margin: const EdgeInsets.only(left: 5),

@@ -71,14 +71,15 @@ class ProfileScreen extends StatelessWidget {
                         const SizedBox(height: 40),
 
                         // Settings Section
-                        _buildSectionTitle("Settings"),
+                        _buildSectionTitle(context, "Settings"),
                         const SizedBox(height: 10),
                         _buildMenuCard(
+                          context: context,
                           children: [
                             BlocBuilder<ThemeBloc, ThemeState>(
                               builder: (context, themeState) {
                                 return SwitchListTile(
-                                  title: const Text('Dark Mode',
+                                  title: const Text('Theme',
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500)),
                                   secondary: Container(
@@ -108,11 +109,13 @@ class ProfileScreen extends StatelessWidget {
                         const SizedBox(height: 20),
 
                         // Developer Options
-                        _buildSectionTitle("Developer Options"),
+                        _buildSectionTitle(context, "Developer Options"),
                         const SizedBox(height: 10),
                         _buildMenuCard(
+                          context: context,
                           children: [
                             _buildListTile(
+                              context: context,
                               icon: Icons.cloud_upload_outlined,
                               title: 'Add Demo Holidays',
                               color: Colors.orange,
@@ -125,11 +128,13 @@ class ProfileScreen extends StatelessWidget {
                         const SizedBox(height: 20),
 
                         // General Section
-                        _buildSectionTitle("General"),
+                        _buildSectionTitle(context, "General"),
                         const SizedBox(height: 10),
                         _buildMenuCard(
+                          context: context,
                           children: [
                             _buildListTile(
+                              context: context,
                               icon: Icons.logout,
                               title: 'Logout',
                               color: Colors.red,
@@ -156,24 +161,25 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: Colors.black87,
+          color: Theme.of(context).textTheme.titleLarge?.color,
         ),
       ),
     );
   }
 
-  Widget _buildMenuCard({required List<Widget> children}) {
+  Widget _buildMenuCard(
+      {required BuildContext context, required List<Widget> children}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -190,6 +196,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildListTile({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required Color color,
@@ -209,7 +216,7 @@ class ProfileScreen extends StatelessWidget {
         title,
         style: TextStyle(
           fontWeight: FontWeight.w500,
-          color: textColor ?? Colors.black87,
+          color: textColor ?? Theme.of(context).textTheme.bodyLarge?.color,
         ),
       ),
       trailing:

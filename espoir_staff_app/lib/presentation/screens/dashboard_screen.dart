@@ -1,8 +1,6 @@
 import 'package:espoir_staff_app/presentation/screens/daily_report_screen.dart';
 import 'package:espoir_staff_app/presentation/screens/leaves_screen.dart';
 import 'package:espoir_staff_app/presentation/screens/home_screen.dart';
-import 'package:espoir_staff_app/presentation/screens/attendance_screen.dart';
-
 import 'package:espoir_staff_app/presentation/screens/profile_screen.dart';
 
 import 'package:flutter/material.dart';

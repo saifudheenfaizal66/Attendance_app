@@ -46,16 +46,8 @@ class _LeavesScreenState extends State<LeavesScreen> {
           SafeArea(
             child: Column(
               children: [
-                const SizedBox(height: 20),
-                const Text(
-                  "My Leaves",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 20),
+                _buildHeader(context),
+                const SizedBox(height: 10),
                 Expanded(
                   child: BlocConsumer<LeaveBloc, LeaveState>(
                     listener: (context, state) {
@@ -75,31 +67,24 @@ class _LeavesScreenState extends State<LeavesScreen> {
                             child:
                                 CircularProgressIndicator(color: Colors.white));
                       } else if (state is LeaveLoaded) {
-                        if (state.leaves.isEmpty) {
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.calendar_today_outlined,
-                                    size: 60,
-                                    color: Colors.white.withOpacity(0.5)),
-                                const SizedBox(height: 16),
-                                const Text(
-                                  'You have not applied for any leaves.',
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.white70),
-                                ),
-                              ],
+                        return Column(
+                          children: [
+                            _buildSummarySection(context, state.leaves),
+                            const SizedBox(height: 20),
+                            Expanded(
+                              child: state.leaves.isEmpty
+                                  ? _buildEmptyState()
+                                  : ListView.builder(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16),
+                                      itemCount: state.leaves.length,
+                                      itemBuilder: (context, index) {
+                                        final leave = state.leaves[index];
+                                        return _buildLeaveCard(context, leave);
+                                      },
+                                    ),
                             ),
-                          );
-                        }
-                        return ListView.builder(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: state.leaves.length,
-                          itemBuilder: (context, index) {
-                            final leave = state.leaves[index];
-                            return _buildLeaveCard(context, leave);
-                          },
+                          ],
                         );
                       } else if (state is LeaveFailure) {
                         return Center(
@@ -125,13 +110,129 @@ class _LeavesScreenState extends State<LeavesScreen> {
     );
   }
 
+  Widget _buildHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          ),
+          const Expanded(
+            child: Center(
+              child: Text(
+                "My Leaves",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 48), // Balance the back button
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummarySection(BuildContext context, List<Leave> leaves) {
+    int total = leaves.length;
+    int approved = leaves.where((l) => l.status == 'Approved').length;
+    int pending = leaves.where((l) => l.status == 'Pending').length;
+    int rejected = leaves.where((l) => l.status == 'Rejected').length;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        children: [
+          Expanded(
+              child: _buildStatCard(
+                  context, 'Total', total.toString(), Colors.blue)),
+          const SizedBox(width: 8),
+          Expanded(
+              child: _buildStatCard(
+                  context, 'Approved', approved.toString(), Colors.green)),
+          const SizedBox(width: 8),
+          Expanded(
+              child: _buildStatCard(
+                  context, 'Pending', pending.toString(), Colors.orange)),
+          const SizedBox(width: 8),
+          Expanded(
+              child: _buildStatCard(
+                  context, 'Rejected', rejected.toString(), Colors.red)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard(
+      BuildContext context, String title, String count, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            count,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.color
+                  ?.withOpacity(0.7),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.calendar_today_outlined,
+              size: 60, color: Colors.white.withOpacity(0.5)),
+          const SizedBox(height: 16),
+          const Text(
+            'You have not applied for any leaves.',
+            style: TextStyle(fontSize: 18, color: Colors.white70),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildLeaveCard(BuildContext context, Leave leave) {
     final statusInfo = _getStatusInfo(leave.status);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -152,10 +253,10 @@ class _LeavesScreenState extends State<LeavesScreen> {
                 Expanded(
                   child: Text(
                     leave.reason,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -194,7 +295,8 @@ class _LeavesScreenState extends State<LeavesScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(Icons.date_range_outlined,
-                      size: 20, color: Colors.grey[700]),
+                      size: 20,
+                      color: Theme.of(context).textTheme.bodyMedium?.color),
                 ),
                 const SizedBox(width: 12),
                 Column(
@@ -204,14 +306,18 @@ class _LeavesScreenState extends State<LeavesScreen> {
                       '${DateFormat.yMMMd().format(leave.fromDate)} - ${DateFormat.yMMMd().format(leave.toDate)}',
                       style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[700],
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.w500),
                     ),
                     Text(
                       '${leave.totalDays} Days',
                       style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[500],
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                              ?.withValues(alpha: 0.7),
                           fontWeight: FontWeight.w400),
                     ),
                   ],
