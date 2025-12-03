@@ -3,10 +3,12 @@ import 'package:espoir_staff_app/presentation/blocs/attendance/attendance_bloc.d
 import 'package:espoir_staff_app/presentation/blocs/weekly_status/weekly_status_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/statistics/statistics_bloc.dart';
 import 'package:espoir_staff_app/presentation/screens/daily_report_screen.dart';
+import 'package:espoir_staff_app/presentation/screens/leaves_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -103,20 +105,22 @@ class _HomeScreenState extends State<HomeScreen> {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.menu, color: Colors.white),
-            ),
+            const SizedBox(width: 30),
             Column(
               children: [
-                const Text(
-                  "Espoir Digital solution",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontStyle: FontStyle.italic,
-                  ),
+                Row(
+                  children: [
+                    const SizedBox(width: 10),
+                    Text(
+                      "Espoir Digital solution",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontFamily: GoogleFonts.breeSerif().fontFamily
+                      ),
+                    ),
+                  ],
                 ),
                 Text(
                   "Hello, $userName",
@@ -414,8 +418,13 @@ class _HomeScreenState extends State<HomeScreen> {
 Widget _buildGridMenuCard(BuildContext context) {
   final List<Map<String, dynamic>> menuItems = [
     //  {'icon': Icons.newspaper, 'label': 'News', 'hasDot': true},
-    {'icon': Icons.calendar_today, 'label': 'Leaves', 'hasDot': false},
-    {'icon': Icons.edit_note_outlined, 'label': 'Assignments', 'hasDot': true},
+    {'icon': Icons.calendar_today, 'label': 'Leaves', 'hasDot': false, 'onTap': () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LeavesScreen()),
+        );
+      }},
+   // {'icon': Icons.edit_note_outlined, 'label': 'Assignments', 'hasDot': true},
     {
       'icon': Icons.assignment,
       'label': 'Daily Reports',

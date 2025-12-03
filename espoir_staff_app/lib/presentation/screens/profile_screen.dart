@@ -1,9 +1,9 @@
 import 'package:espoir_staff_app/presentation/blocs/auth/auth_bloc.dart';
 import 'package:espoir_staff_app/presentation/blocs/theme/theme_bloc.dart';
-import 'package:espoir_staff_app/data/utils/demo_data.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -43,29 +43,30 @@ class ProfileScreen extends StatelessWidget {
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
+                           
                           ),
                         ),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 20),
                         Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
-                          child: const CircleAvatar(
-                            radius: 50,
-                            backgroundColor: Color(0xFFE0E0E0),
-                            child: Icon(Icons.person,
-                                size: 50, color: Colors.grey),
+                          child: Image.asset(
+                            'asset/Espoir_Logo.png',
+                            height: 90,
+                            width: 90,
                           ),
                         ),
                         const SizedBox(height: 16),
                         Text(
                           state.user.email ?? 'No Email',
-                          style: const TextStyle(
+                          style:  TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
+                             fontFamily: GoogleFonts.mavenPro().fontFamily
                           ),
                         ),
                         const SizedBox(height: 40),
@@ -108,25 +109,6 @@ class ProfileScreen extends StatelessWidget {
 
                         const SizedBox(height: 20),
 
-                        // Developer Options
-                        _buildSectionTitle(context, "Developer Options"),
-                        const SizedBox(height: 10),
-                        _buildMenuCard(
-                          context: context,
-                          children: [
-                            _buildListTile(
-                              context: context,
-                              icon: Icons.cloud_upload_outlined,
-                              title: 'Add Demo Holidays',
-                              color: Colors.orange,
-                              onTap: () =>
-                                  DemoDataSeeder.addDemoHolidays(context),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 20),
-
                         // General Section
                         _buildSectionTitle(context, "General"),
                         const SizedBox(height: 10),
@@ -140,9 +122,31 @@ class ProfileScreen extends StatelessWidget {
                               color: Colors.red,
                               textColor: Colors.red,
                               onTap: () {
-                                context
-                                    .read<AuthBloc>()
-                                    .add(AuthLogoutRequested());
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Logout'),
+                                    content: const Text(
+                                        'Are you sure you want to logout?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          context
+                                              .read<AuthBloc>()
+                                              .add(AuthLogoutRequested());
+                                        },
+                                        child: const Text('Logout',
+                                            style:
+                                                TextStyle(color: Colors.red)),
+                                      ),
+                                    ],
+                                  ),
+                                );
                               },
                             ),
                           ],

@@ -31,11 +31,23 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   timezone: ^0.10.0
   uuid: ^4.5.2
+  google_fonts: ^6.1.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - asset/
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
 
-flutter:
-  uses-material-design: true
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "asset/Espoir_Logo.png"
+  adaptive_icon_background: "#6C63FF"
+  adaptive_icon_foreground: "asset/Espoir_Logo_Padded.png"
+  min_sdk_android: 21

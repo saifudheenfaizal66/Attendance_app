@@ -21,19 +21,12 @@ class LoginScreen extends StatelessWidget {
             child: SafeArea(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Espoir Digital Solution",
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 1.2,
-                    ),
+                children: [ 
+                  Image.asset(
+                    'asset/Espoir_Logo.png',
+                    height: 150,
+                    width: 200,
                   ),
-                  const SizedBox(height: 8),
                   Text(
                     "Staff Portal",
                     style: TextStyle(

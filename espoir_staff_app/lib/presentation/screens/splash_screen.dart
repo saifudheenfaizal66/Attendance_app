@@ -5,15 +5,28 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Initializing...', style: TextStyle(color: Colors.black)),
+            Image.asset(
+              'asset/Espoir_Logo.png',
+              height: 150,
+              width: 150,
+            ),
+            const SizedBox(height: 24),
+            const CircularProgressIndicator(color: Color(0xFF6C63FF)),
+            const SizedBox(height: 16),
+            const Text(
+              'Espoir Digital Solution',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF6C63FF),
+              ),
+            ),
           ],
         ),
       ),
