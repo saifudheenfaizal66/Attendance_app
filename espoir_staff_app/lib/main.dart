@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => ThemeBloc(),
+            create: (context) => ThemeBloc()..add(ThemeLoaded()),
           ),
           BlocProvider(
             create: (context) => AuthBloc(

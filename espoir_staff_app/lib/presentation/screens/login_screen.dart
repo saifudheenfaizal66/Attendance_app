@@ -21,7 +21,7 @@ class LoginScreen extends StatelessWidget {
             child: SafeArea(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [ 
+                children: [
                   Image.asset(
                     'asset/Espoir_Logo.png',
                     height: 150,
@@ -47,9 +47,9 @@ class LoginScreen extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(40),
                   topRight: Radius.circular(40),
                 ),
@@ -119,12 +119,13 @@ class _LoginFormState extends State<LoginForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
+            Text(
               'Welcome to Espoir',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF333333),
+                color: Theme.of(context).textTheme.bodyLarge?.color ??
+                    const Color(0xFF333333),
               ),
             ),
             const SizedBox(height: 8),
@@ -233,7 +234,11 @@ class _LoginFormState extends State<LoginForm> {
       style: const TextStyle(fontSize: 16),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.grey[600]),
+        labelStyle: TextStyle(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey[400]
+              : Colors.grey[600],
+        ),
         prefixIcon: Icon(icon, color: const Color(0xFF6C63FF)),
         suffixIcon: isPassword
             ? IconButton(
@@ -247,7 +252,9 @@ class _LoginFormState extends State<LoginForm> {
               )
             : null,
         filled: true,
-        fillColor: Colors.grey.shade100,
+        fillColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.grey.shade100,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide.none,

@@ -84,6 +84,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 20),
                       _buildGridMenuCard(context),
                       const SizedBox(height: 20),
+
+                      TextButton.icon(
+                        onPressed: () {
+                          context
+                              .read<AttendanceBloc>()
+                              .add(SetCurrentLocationAsOffice());
+                        },
+                        icon: const Icon(Icons.my_location, size: 16),
+                        label: const Text(
+                            'Set Current Location as Office (Debug)'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey,
+                          textStyle: const TextStyle(fontSize: 12),
+                        ),
+                      ),
                     ],
                   ),
                 ),

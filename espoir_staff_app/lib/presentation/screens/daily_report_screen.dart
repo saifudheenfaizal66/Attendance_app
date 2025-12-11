@@ -138,7 +138,14 @@ class _DailyReportScreenState extends State<DailyReportScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 filled: true,
-                fillColor: Colors.grey[50],
+                fillColor: Theme.of(context).cardColor,
+                hintStyle: TextStyle(
+                  color: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.color
+                      ?.withValues(alpha: 0.5),
+                ),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
@@ -224,7 +231,11 @@ class _DailyReportScreenState extends State<DailyReportScreen> {
                       DateFormat('h:mm a').format(report.createdAt),
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey[600],
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.color
+                            ?.withValues(alpha: 0.7),
                       ),
                     ),
                   ],

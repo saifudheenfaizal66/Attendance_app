@@ -79,4 +79,28 @@ class LeaveRepositoryImpl implements LeaveRepository {
 
     return totalDays;
   }
+
+  @override
+  Future<List<Leave>> getApprovedLeavesForMonth(
+      String userId, DateTime month) async {
+    final startOfMonth = DateTime(month.year, month.month, 1);
+    final endOfMonth = DateTime(month.year, month.month + 1, 0, 23, 59, 59);
+
+    final snapshot = await _firestore
+        .collection('leaves')
+        .where('userId', isEqualTo: userId)
+        .where('status', isEqualTo: 'Approved')
+        .get();
+
+    final allApprovedLeaves =
+        snapshot.docs.map((doc) => LeaveModel.fromFirestore(doc)).toList();
+
+    // Filter locally for month overlap
+    // A leave counts for a month if any part of it falls within that month
+    return allApprovedLeaves.where((leave) {
+      // Check if leave date range overlaps with the month
+      return leave.fromDate.isBefore(endOfMonth) &&
+          leave.toDate.isAfter(startOfMonth);
+    }).toList();
+  }
 }

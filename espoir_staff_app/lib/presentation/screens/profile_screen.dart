@@ -43,7 +43,6 @@ class ProfileScreen extends StatelessWidget {
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
-                           
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -62,12 +61,11 @@ class ProfileScreen extends StatelessWidget {
                         const SizedBox(height: 16),
                         Text(
                           state.user.email ?? 'No Email',
-                          style:  TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                             fontFamily: GoogleFonts.mavenPro().fontFamily
-                          ),
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                              fontFamily: GoogleFonts.mavenPro().fontFamily),
                         ),
                         const SizedBox(height: 40),
 
@@ -94,7 +92,8 @@ class ProfileScreen extends StatelessWidget {
                                         Icons.brightness_6_outlined,
                                         color: Color(0xFF6C63FF)),
                                   ),
-                                  value: themeState.themeMode == ThemeMode.dark,
+                                  value: Theme.of(context).brightness ==
+                                      Brightness.dark,
                                   activeThumbColor: const Color(0xFF6C63FF),
                                   onChanged: (value) {
                                     context

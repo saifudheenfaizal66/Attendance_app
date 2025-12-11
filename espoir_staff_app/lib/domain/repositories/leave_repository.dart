@@ -5,4 +5,5 @@ abstract class LeaveRepository {
   Stream<List<Leave>> getLeaves(String userId);
   Future<void> cancelLeave(String leaveId);
   Future<int> calculateLeaveDays(DateTime from, DateTime to);
+  Future<List<Leave>> getApprovedLeavesForMonth(String userId, DateTime month);
 }
